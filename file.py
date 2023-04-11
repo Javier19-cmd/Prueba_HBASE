@@ -1,7 +1,33 @@
 import os
+import ast
 
 # Creando un diccionario vacío para poder simular un servidor de archivos.
 files = {}
+
+# Creando una lista para guardar los nombres de los archivos txt.
+archivos_txt = []
+
+# Guardando los nombres de los .txt ya creados en una simulación anterior.
+carpeta = os.getcwd()
+archivos_txt = [archivo for archivo in os.listdir(carpeta) if archivo.endswith('.txt')]
+
+for i, nombre_archivo in enumerate(archivos_txt):
+    if nombre_archivo.endswith('.txt'):
+        archivos_txt[i] = nombre_archivo[:-4]  # elimina los últimos 4 caracteres (.txt)
+
+def cargar_archivos():
+    global files
+
+    for archivo in archivos_txt:
+        with open(archivo + ".txt", "r") as f:
+            contenido = f.read()
+            #tablas = ast.literal_eval(contenido)
+
+            # # Quitarle al string del archivo el .txt.
+            # arch = archivo.split(".")[0]
+
+            # Cargando primero el nombre de cada archivo en la tabla.
+            files[archivo] = ast.literal_eval(contenido)
 
 # Función para crear un archivo.
 def crear_archivo(nombre):
@@ -9,6 +35,8 @@ def crear_archivo(nombre):
         print("El archivo ya existe.")
     else:
         files[nombre] = ""
+        archivos_txt.append(nombre)
+
     
     return nombre
 
@@ -52,7 +80,19 @@ def eliminar_archivo(nombre):
     if nombre in files:
         del files[nombre]
 
+        # Eliminando el archivo de la lista también.
+        archivos_txt.remove(nombre)
+
         os.remove(nombre + ".txt")
 
     else:
-        print("El archivo no existe.")
+        print("El archivo {nombre} no existe.")
+
+# Método para eliminar todos los archivos.
+def eliminar_archivos():
+
+    for file in list(files):
+
+        eliminar_archivo(file)
+    
+    print("Files: ", files)

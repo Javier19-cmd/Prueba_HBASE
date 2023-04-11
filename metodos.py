@@ -1,8 +1,40 @@
 import uuid
 import time
+import os
+import ast
 
 # Diccionario para almacenar las tablas
 tablas = {}
+
+# Guardando los nombres de los archivos anteriormente creados.
+archivos_txt = []
+
+ruta = os.getcwd()
+
+archivos_txt = [archivo for archivo in os.listdir(ruta) if archivo.endswith('.txt')]
+
+for i, nombre_archivo in enumerate(archivos_txt):
+    if nombre_archivo.endswith('.txt'):
+        archivos_txt[i] = nombre_archivo[:-4]  # elimina los últimos 4 caracteres (.txt)
+
+# Método para cargar el contenido de los archivos ya creados en alguna simulación anterior.
+def cargar_archivos():
+    global tablas # Variable para cargar las tablas en un diccionario.
+
+    for archivo in archivos_txt:
+        with open(archivo + ".txt", "r") as f:
+            contenido = f.read()
+            #tablas = ast.literal_eval(contenido)
+
+            # # Quitarle al string del archivo el .txt.
+            # arch = archivo.split(".")[0]
+
+            # Cargando primero el nombre de cada archivo en la tabla.
+            tablas[archivo] = ast.literal_eval(contenido)
+
+def ver_tablas():
+    print(tablas)        
+
 
 # Función para crear una tabla
 def crear_tabla(nombre, column_families, datos):
@@ -103,4 +135,56 @@ def listar_filas(nombre_tabla):
     # Retornar la lista de filas
     return filas
 
+# Función para eliminar una tabla de HBase.
+def eliminar_tabla(nombre):
 
+    # Verificando si la tabla existe en el diccionario.
+    if nombre in tablas:
+        # Eliminando la tabla del diccionario.
+        del tablas[nombre]
+        print(f"Tabla {nombre} eliminada exitosamente.")
+
+        # Eliminando la tabla también de la lista.
+        archivos_txt.remove(nombre + ".txt")
+
+    else:
+        print(f"La tabla {nombre} no existe.")
+
+# Función para elimintar todas las tablas de la base de datos.
+def eliminar_todas_tablas():
+
+    print("Archivos: ", type(archivos_txt))
+
+    # Quitarle la extensión .txt a los nombres en archivos_txt, si algún 
+    # string lo tiene.
+    
+
+    # Recorrer todas las tablas en la base de datos
+    for tabla in list(tablas.keys()):
+        # Eliminar todas las filas de la tabla
+        del tablas[tabla]
+
+        # Si el nombre no tiene .txt, agregárselo.
+        if not tabla.endswith(".txt"):
+            tabla += ".txt"
+
+        #print("Tabla: ", tabla)
+
+        # Si en caso el nombre tiene extensión, se le quita y se elimina de la lista.
+        if tabla.endswith(".txt"):
+            nombre_sin_extension = tabla.split(".")[0]
+
+            if nombre_sin_extension in archivos_txt:
+                #del tablas[nombre_sin_extension]
+                archivos_txt.remove(nombre_sin_extension)
+        else: 
+            
+            del tablas[tabla]
+
+            archivos_txt.remove(tabla)
+    
+    # Eliminar todas las tablas de la base de datos
+    tablas.clear()
+
+    print("Todas las tablas han sido eliminadas.")
+    print("Tablas: ", tablas)
