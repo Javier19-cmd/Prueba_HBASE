@@ -6,6 +6,9 @@ import ast
 # Diccionario para almacenar las tablas
 tablas = {}
 
+# Diccionario que va a tener las column families de cada tabla.
+column_familys = {}
+
 # Guardando los nombres de los archivos anteriormente creados.
 archivos_txt = []
 
@@ -32,6 +35,20 @@ def cargar_archivos():
             # Cargando primero el nombre de cada archivo en la tabla.
             tablas[archivo] = ast.literal_eval(contenido)
 
+    dict = {}
+
+    column_families = []
+
+    for table_name in tablas:
+        for column_family in tablas[table_name]:
+            if column_family != 'timestamp':
+                if column_family not in column_families:
+                    column_families.append(column_family)
+
+    column_familys[table_name] = column_families
+
+    print(column_familys)
+
 def ver_tablas():
     print(tablas)        
 
@@ -42,6 +59,10 @@ def crear_tabla(nombre, column_families, datos):
         print("La tabla ya existe.")
     else:
         tablas[nombre] = {}
+        archivos_txt.append(nombre)
+
+        # Guardando cada tabla con su column families en un diccionario aparte.
+        #column_family[nombre] = column_families
 
         # Agregar column families a la tabla
         for cf in column_families:
@@ -145,7 +166,7 @@ def eliminar_tabla(nombre):
         print(f"Tabla {nombre} eliminada exitosamente.")
 
         # Eliminando la tabla también de la lista.
-        archivos_txt.remove(nombre + ".txt")
+        archivos_txt.remove(nombre)
 
     else:
         print(f"La tabla {nombre} no existe.")
@@ -188,3 +209,14 @@ def eliminar_todas_tablas():
 
     print("Todas las tablas han sido eliminadas.")
     print("Tablas: ", tablas)
+
+# Método para describir las tablas que se tienen.
+def describe():
+
+    print("Column family: ", column_familys)
+
+    for table in column_familys:
+        print("Tabla:", table)
+        print("Column Families:")
+        for cf in column_familys[table]:
+            print("\t", cf)

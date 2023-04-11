@@ -21,6 +21,7 @@ def main():
     print("2. Listar las filas de una tabla de HBase \n")
     print("3. Eliminar una tabla de HBase \n")
     print("4. Eliminar todas las tablas de HBase \n")
+    print("5. Describir las tablas de HBase \n")
 
 
     opciones = 0
@@ -84,5 +85,9 @@ def main():
 
             # Eliminando todos los archivos.
             fl.eliminar_archivos()
+
+        # Describir todas las tablas de HBase.
+        elif opciones == 5: 
+            describe()
             
 main()
