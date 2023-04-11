@@ -1,45 +1,56 @@
 import file as fl
 from metodos import *
+import json
 
-# Eliminando archivo.
-#fl.eliminar_archivo(archivo)
-column_families = ["cf1", "cf2", "cf3"]
-datos = {
-    "1": {
-        "cf1": {
-            "A": "valor_1",
-            "B": "valor_2"
-        },
-        "cf2": {
-            "A": "valor_3",
-            "B": "valor_4"
-        }
-    },
-    "2": {
-        "cf1": {
-            "A": "valor_5",
-            "B": "valor_6"
-        },
-        "cf3": {
-            "A": "valor_7",
-            "B": "valor_8"
-        }
-    }
-}
+# Hacer un main con opciones.
+def main():
 
-nombre, tabla = crear_tabla("HBase", column_families, datos)
+    print("Bienvenid@ al simulador de HBase \n")
 
-print("Nombre: ", nombre)
-print("Tabla: ", tabla)
+    print("Las opciones son: \n")
+    print("1. Crear una tabla de HBase \n")
+    print("2. Listar las filas de una tabla de HBase \n")
 
-# Creando el archivo.
-archivo = fl.crear_archivo(nombre)
 
-# Escribiendo en el archivo.
-files = fl.escribir_archivo(archivo, tabla)
+    opciones = 0
+    while True:
+        opciones = int(input("Ingrese una opción: "))
 
-print("Archivo: ", archivo)
-print("Contenido: ", files)
+        if opciones == 1:
+            nombre_tabla = input("Ingrese el nombre de la tabla: ")
 
-# Guardando el archivo.
-fl.escribir_txt(archivo, files)
+            numcf = int(input("Ingrese la cantidad de column families que quiere tener en la tabla: "))
+
+            column_families = crear_column_families(numcf) # Creando los column families.
+            
+            datosT = input("Ingrese los datos que se quieren meter a la tabla: ")
+
+            datos = json.loads(datosT)
+
+            nombre, tabla = crear_tabla(nombre_tabla, column_families, datos)
+
+            print("Nombre: ", nombre)
+            print("Tabla: ", tabla)
+
+            # Creando el archivo.
+            archivo = fl.crear_archivo(nombre)
+
+            # Escribiendo en el archivo.
+            files = fl.escribir_archivo(archivo, tabla)
+
+            print("Archivo: ", archivo)
+            print("Contenido: ", files)
+
+            # Guardando el archivo.
+            fl.escribir_txt(archivo, files)
+
+        # Listar las filas de una tabla.
+        elif opciones == 2:
+            nombre_tabla = input("Ingrese el nombre de la tabla: ")
+
+            # Listando las filas de la tabla en los métodos.
+            filas = listar_filas(nombre_tabla)
+
+            print("Filas: ", filas)
+            
+main()

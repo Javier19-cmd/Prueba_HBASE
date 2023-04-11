@@ -57,8 +57,12 @@ def agregar_celda(nombre_tabla, row_key, cf, column, value):
     # Agregar la celda a la tabla con su respectivo timestamp
     tablas[nombre_tabla][cf][(column, row_key)] = (value, timestamp)
 
-    print(f"Celda ({column}, {row_key}, {value}, {timestamp}) agregada a la columna familiar {cf} de la tabla {nombre_tabla}.")
+    #print(f"Celda ({column}, {row_key}, {value}, {timestamp}) agregada a la columna familiar {cf} de la tabla {nombre_tabla}.")
 
+# Función para crear column families
+def crear_column_families(num_cfs):
+    cfs = ["cf" + str(i+1) for i in range(num_cfs)]
+    return cfs
 
 # Función para obtener las celdas agregadas a una columna familiar
 def obtener_celdas_columna(nombre_tabla, cf):
@@ -74,3 +78,29 @@ def obtener_celdas_columna(nombre_tabla, cf):
 
     # Retornar las celdas agregadas a la columna familiar
     return tablas[nombre_tabla][cf]
+
+# Método para listar las filas de una tabla.
+def listar_filas(nombre_tabla):
+    # Verificar si la tabla existe
+    if nombre_tabla not in tablas:
+        print(f"La tabla {nombre_tabla} no existe.")
+        return []
+
+    # Crear una lista para almacenar las filas encontradas
+    filas = []
+
+    # Recorrer todas las filas de la tabla
+    for row_key in tablas[nombre_tabla]:
+        # Verificar que la fila no sea la fila de timestamp
+        if row_key != "timestamp":
+            # Verificar si la fila no es una column family
+            if not any(row_key.startswith(cf + ":") for cf in tablas[nombre_tabla].keys()):
+                # Agregar la fila a la lista
+                filas.append(row_key)
+        
+    # Quitando de la lista todo lo que empiece con cf.
+    filas = [elem for elem in filas if not elem.startswith('cf')]
+    # Retornar la lista de filas
+    return filas
+
+
