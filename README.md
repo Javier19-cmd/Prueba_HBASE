@@ -9,3 +9,15 @@
 # Opción 2 del programa.
 
 1. Ingresar el nombre de la tabla que se creó en la opción anterior. Este nombre se debe ingresar en la misma simulación que cuando se creó la tabla.
+
+# Opción 3 del programa.
+
+1. Ingresar el nombre específico de la tabla para eliminarla de la lista de tablas y del directorio.
+
+# Opción 4 del programa.
+
+1. Su selección borra todos los los archivos del directorio actual.
+
+# Opción 5 del programa.
+
+1. Especifica los column families de todas las tablas.
