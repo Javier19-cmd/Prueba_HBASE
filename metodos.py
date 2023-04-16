@@ -20,11 +20,11 @@ for i, nombre_archivo in enumerate(archivos_txt):
     if nombre_archivo.endswith('.txt'):
         archivos_txt[i] = nombre_archivo[:-4]  # elimina los últimos 4 caracteres (.txt)
 
-# Método para cargar el contenido de los archivos ya creados en alguna simulación anterior.
 def cargar_archivos():
-    global tablas # Variable para cargar las tablas en un diccionario.
+    global tablas, column_familys # Variable para cargar las tablas en un diccionario.
 
     for archivo in archivos_txt:
+
         with open(archivo + ".txt", "r") as f:
             contenido = f.read()
             #tablas = ast.literal_eval(contenido)
@@ -35,19 +35,15 @@ def cargar_archivos():
             # Cargando primero el nombre de cada archivo en la tabla.
             tablas[archivo] = ast.literal_eval(contenido)
 
-    dict = {}
-
-    column_families = []
-
     for table_name in tablas:
+        column_familys[table_name] = []
         for column_family in tablas[table_name]:
             if column_family != 'timestamp':
-                if column_family not in column_families:
-                    column_families.append(column_family)
-
-    column_familys[table_name] = column_families
+                if column_family not in column_familys[table_name]:
+                    column_familys[table_name].append(column_family)
 
     print(column_familys)
+
 
 def ver_tablas():
     print(tablas)        
