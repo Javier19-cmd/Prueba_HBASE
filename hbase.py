@@ -77,6 +77,26 @@ def main():
             # Eliminando los archivos.
             fl.eliminar_archivos()
         
+        elif palabras[0] == "list":
+
+            #coma, nombret = comando.split(maxsplit=1)
+
+            #print("Nombret: ", nombret)
+
+            # nombre_tabla = input("Ingrese el nombre de la tabla: ")
+
+            # Listando las filas de la tabla en los métodos.
+            # filas = listar_filas(nombret)
+
+            # print("Filas: ", filas)
+
+            tablas = listar()
+
+            for tabla in tablas: 
+                print(tabla)
+
+
+        
         elif palabras[0] == "quit": # Cerrar la simulación.
 
             print("Saliendo del simulador")

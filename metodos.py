@@ -128,29 +128,45 @@ def obtener_celdas_columna(nombre_tabla, cf):
     # Retornar las celdas agregadas a la columna familiar
     return tablas[nombre_tabla][cf]
 
-# Método para listar las filas de una tabla.
-def listar_filas(nombre_tabla):
-    # Verificar si la tabla existe
-    if nombre_tabla not in tablas:
-        print(f"La tabla {nombre_tabla} no existe.")
-        return []
+# def listar_filas(nombre_tabla):
+#     # Verificar si la tabla existe
+#     if nombre_tabla not in tablas:
+#         print(f"La tabla {nombre_tabla} no existe.")
+#         return []
 
-    # Crear una lista para almacenar las filas encontradas
-    filas = []
+#     # Crear una lista para almacenar las filas encontradas
+#     filas = []
 
-    # Recorrer todas las filas de la tabla
-    for row_key in tablas[nombre_tabla]:
-        # Verificar que la fila no sea la fila de timestamp
-        if row_key != "timestamp":
-            # Verificar si la fila no es una column family
-            if not any(row_key.startswith(cf + ":") for cf in tablas[nombre_tabla].keys()):
-                # Agregar la fila a la lista
-                filas.append(row_key)
-        
-    # Quitando de la lista todo lo que empiece con cf.
-    filas = [elem for elem in filas if not elem.startswith('cf')]
-    # Retornar la lista de filas
-    return filas
+#     # Recorrer todas las filas de la tabla
+#     for row_key in tablas[nombre_tabla]:
+#         # Verificar que la fila no sea la fila de timestamp
+#         if row_key != "timestamp":
+#             # Verificar si la fila tiene celdas
+#             tiene_celdas = False
+#             for cf_name, cf_data in tablas[nombre_tabla][row_key].items():
+#                 if cf_data:
+#                     tiene_celdas = True
+#                     break
+            
+#             # Si la fila tiene celdas, agregarla a la lista
+#             if tiene_celdas:
+#                 filas.append(row_key)
+
+#     # Retornar la lista de filas
+#     return filas
+
+def listar():
+
+    global tablas
+
+    # Lista para almacenar los nombres de las tablas.
+    nombre_tablas = []
+
+    # Recorrer el diccionario de tablas.
+    for tabla in tablas:
+        nombre_tablas.append(tabla)
+
+    return nombre_tablas
 
 # Función para eliminar una tabla de HBase.
 def eliminar_tabla(nombre):
