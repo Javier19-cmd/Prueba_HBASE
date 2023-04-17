@@ -80,7 +80,7 @@ def crear_tabla(nombre, column_families):
 
         fl.escribir_txt(nombre)
     
-    print("Nombre antes de ser retornado: ", nombre)
+    #print("Nombre antes de ser retornado: ", nombre)
     # Retornar el nombre y la tabla entera.
     return nombre
 
@@ -327,10 +327,34 @@ def delete_column_family(tabla, cf):
 
 def truncate(tabla):
     if tabla in archivos_txt:
-        with open("./tables/" + tabla + ".txt", "w") as f:
-            f.write("{}")
+        # with open("./tables/" + tabla + ".txt", "w") as f:
+        #     f.write("{}")
         
-        print("Tabla truncada.")
+        # print("Tabla truncada.")
+
+
+        # Abriendo el archivo de metadata para guardar localemente 
+        # los column families.
+        with open("metadata.txt", "r") as f:
+            diccionario = json.load(f)
+
+        # Obteniendo los column families de la tabla.
+        column_families = diccionario[tabla]["families"]
+
+        #print("Column families: ", column_families)
+
+        # Deshabilitando la tabla.
+        print("Deshabilitando la tabla")
+        disable(tabla)
+
+        # Eliminando la tabla.
+        print("Eliminando la tabla")
+        eliminar_tabla(tabla)
+
+        # Creando la tabla de nuevo.
+        print("Creando la tabla de nuevo")
+        crear_tabla(tabla, column_families)
+
     else:
         print(f"La tabla {tabla} no existe.")
 
