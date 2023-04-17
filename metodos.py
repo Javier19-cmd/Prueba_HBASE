@@ -5,6 +5,7 @@ import ast
 from datetime import datetime
 import file as fl
 import copy
+from prettytable import PrettyTable
 
 # Diccionario que va a tener las column families de cada tabla.
 column_familys = {}
@@ -375,6 +376,27 @@ def contar(tabla):
             return len(diccionario)
     else:
         print(f"La tabla {tabla} no existe.")
+
+def scan(tabla):
+    if tabla in archivos_txt:
+        diccionario = {}
+        print_table = PrettyTable()
+        print_table.field_names = ["ROW", "COLUMN+CELL"]
+
+        with open("./tables/" + tabla + ".txt", "r") as f:
+            diccionario = json.load(f)
+            for id, dicc in diccionario.items():
+                for familia, dicc2 in dicc.items():
+                    for propiedad, dicc3 in dicc2.items():
+                        print(propiedad)
+                        timestamp = dicc3["timestamp"]
+                        value = dicc3["value"]
+                        print_table.add_row([id, f"column={familia}:{propiedad}, timestamp={timestamp}, value={value}"])
+
+            #column=Personal info:Name, timestamp=1504600767520, value=Alex  
+        print(print_table)
+    else:
+        print(f"La tabla {tabla} no existe.")       
 
 
 def delete(tabla, fila, colf):

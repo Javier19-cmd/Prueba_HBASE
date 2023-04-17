@@ -193,6 +193,13 @@ def main():
             
             print(f"Total de filas: {contar(nombre_tabla)}")
 
+        elif palabras[0] == "scan":
+            coma, nombre_tabla = comando.split(maxsplit=1)
+            
+            nombre_tabla = limpiar(nombre_tabla)
+            
+            scan(nombre_tabla)
+
         elif palabras[0] == "quit": # Cerrar la simulación.
 
             print("Saliendo del simulador")
