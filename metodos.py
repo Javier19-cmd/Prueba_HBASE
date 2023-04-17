@@ -251,3 +251,39 @@ def put(tabla, fila, colf):
 
     else:
         print(f"La tabla {tabla} no existe.")
+        
+def disable(tabla):
+    if tabla in archivos_txt:
+        with open("metadata.txt", "r") as f:
+            diccionario = json.load(f)
+        
+        diccionario[tabla]["enabled"] = False
+        
+        with open("metadata.txt", 'w') as f:
+            json.dump(diccionario, f)
+        
+    else:
+        print(f"La tabla {tabla} no existe.")
+    
+def enable(tabla):
+    if tabla in archivos_txt:
+        with open("metadata.txt", "r") as f:
+            diccionario = json.load(f)
+        
+        diccionario[tabla]["enabled"] = True
+        
+        with open("metadata.txt", 'w') as f:
+            json.dump(diccionario, f)
+        
+    else:
+        print(f"La tabla {tabla} no existe.")
+        
+def is_enabled(tabla):
+    if tabla in archivos_txt:
+        with open("metadata.txt", "r") as f:
+            diccionario = json.load(f)
+        
+        print(diccionario[tabla]["enabled"])
+        
+    else:
+        print(f"La tabla {tabla} no existe.")

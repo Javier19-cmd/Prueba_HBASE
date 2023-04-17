@@ -100,7 +100,34 @@ def main():
             put(nombre_tabla, row_id, colfprop)
 
             print("Dato ingresado")
+            
+        elif palabras[0] == "disable":
+            
+            coma, nombre_tabla = comando.split(maxsplit=1)
+            
+            nombre_tabla = limpiar(nombre_tabla)
+            
+            disable(nombre_tabla)
+        
+        
+        elif palabras[0] == "enable":
+            
+            coma, nombre_tabla = comando.split(maxsplit=1)
+            
+            nombre_tabla = limpiar(nombre_tabla)
+            
+            enable(nombre_tabla)
 
+        
+        elif palabras[0] == "is_enabled":
+            
+            coma, nombre_tabla = comando.split(maxsplit=1)
+            
+            nombre_tabla = limpiar(nombre_tabla)
+            
+            is_enabled(nombre_tabla)    
+    
+    
         elif palabras[0] == "quit": # Cerrar la simulación.
 
             print("Saliendo del simulador")
