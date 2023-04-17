@@ -1,7 +1,9 @@
 import uuid
 import time
 import os
+import json
 import ast
+from datetime import datetime
 
 # Diccionario para almacenar las tablas
 tablas = {}
@@ -42,7 +44,7 @@ def cargar_archivos():
                 if column_family not in column_familys[table_name]:
                     column_familys[table_name].append(column_family)
 
-    print(column_familys)
+    #print(column_familys)
 
 
 def ver_tablas():
@@ -50,7 +52,7 @@ def ver_tablas():
 
 
 # Función para crear una tabla
-def crear_tabla(nombre, column_families, datos):
+def crear_tabla(nombre, column_families):
     if nombre in tablas:
         print("La tabla ya existe.")
     else:
@@ -64,47 +66,93 @@ def crear_tabla(nombre, column_families, datos):
         for cf in column_families:
             tablas[nombre][cf] = {}
 
-        # Agregar los datos a la tabla
-        for row_key, cf_data in datos.items():
-            for cf_name, cf_values in cf_data.items():
-                for column, value in cf_values.items():
-                    agregar_celda(nombre, row_key, cf_name, column, value)
+        # # Agregar los datos a la tabla
+        # for row_key, cf_data in datos.items():
+        #     for cf_name, cf_values in cf_data.items():
+        #         for column, value in cf_values.items():
+        #             agregar_celda(nombre, row_key, cf_name, column, value)
 
         # Generar un row key único y obtener el timestamp actual en milisegundos
+        
+        #print("Tabla: ", tablas)
+        
         row_key = str(uuid.uuid4())
         timestamp = int(round(time.time() * 1000))
+        enable = "1"
 
         # Agregar el row key y el timestamp a la tabla
-        tablas[nombre]["timestamp"] = {row_key: timestamp}
+        #tablas[nombre]["timestamp"] = {row_key: timestamp}
 
-        print(f"Tabla {nombre} creada exitosamente.")
+        diccionario = {}
 
-    # Retornar el nombre de la tabla y la tabla
-    return nombre, {cf_name: cf_data for cf_name, cf_data in tablas[nombre].items() if cf_data}
+        with open("metadata.txt", "r") as f: 
+            # Guardando lo que hay en el archivo de metadata en el diccionario.
+            
+            contenido = f.read()
 
+        diccionario = json.loads(contenido)
+        print(diccionario)
+
+        # Agregando el nombre de la tabla, el timestamp y el enabled a un diccionario.
+        diccionario[nombre] = {"timestamp": timestamp, "enabled": enable}
+
+        # Guardando esta data en el metadata.
+        with open("metadata.txt", "w") as f:
+            f.write(json.dumps(diccionario))
+        
+
+        # # Guardando el nombre de la tabla, el timestamp y el enabled de la tabla en un archivo txt.
+        # with open("metadata.txt", "w") as f:
+        #     f.write(str(nombre), str(timestamp), str(enable))
+
+        # print(f"Tabla {nombre} creada exitosamente.")
+    # Retornar el nombre y la tabla entera.
+    return nombre, tablas[nombre]
 
 # Función para agregar una celda a una tabla
 def agregar_celda(nombre_tabla, row_key, cf, column, value):
     # Verificar si la tabla existe
-    if nombre_tabla not in tablas:
-        print(f"La tabla {nombre_tabla} no existe.")
-        return
+    
+    diccionario = {}
 
-    # Verificar si el row key existe en la tabla
-    if row_key not in tablas[nombre_tabla]:
-        # Si el row key no existe, agregarlo a la tabla
-        tablas[nombre_tabla][row_key] = {}
+    with open(nombre_tabla + ".txt", "r+") as f:
 
-    # Verificar si la columna familiar existe en la tabla
-    if cf not in tablas[nombre_tabla]:
-        print(f"La columna familiar {cf} no existe en la tabla {nombre_tabla}.")
-        return
+        # Guardando lo que hay en el archivo de metadata en el diccionario.
+        #contenido = f.read()
 
-    # Generar un timestamp para la celda
-    timestamp = int(round(time.time() * 1000))
+        diccionario = json.load(f)
+        
+        fecha_hora_actual = datetime.now()
 
-    # Agregar la celda a la tabla con su respectivo timestamp
-    tablas[nombre_tabla][cf][(column, row_key)] = (value, timestamp)
+        if row_key not in diccionario:
+            diccionario[row_key] = {}
+        
+        if cf not in diccionario[row_key]:
+            diccionario[row_key][cf] = {}
+        
+        if column not in diccionario[row_key][cf]:
+            diccionario[row_key][cf][column] = {}
+        
+        
+
+        diccionario[row_key][cf][column]["value"] = value
+        diccionario[row_key][cf][column]["timestamp"] = fecha_hora_actual
+
+    # # Verificar si el row key existe en la tabla
+    # if row_key not in tablas[nombre_tabla]:
+    #     # Si el row key no existe, agregarlo a la tabla
+    #     tablas[nombre_tabla][row_key] = {}
+
+    # # Verificar si la columna familiar existe en la tabla
+    # if cf not in tablas[nombre_tabla]:
+    #     print(f"La columna familiar {cf} no existe en la tabla {nombre_tabla}.")
+    #     return
+
+    # # Generar un timestamp para la celda
+    # timestamp = int(round(time.time() * 1000))
+
+    # # Agregar la celda a la tabla con su respectivo timestamp
+    # tablas[nombre_tabla][cf][(column, row_key)] = (value, timestamp)
 
     #print(f"Celda ({column}, {row_key}, {value}, {timestamp}) agregada a la columna familiar {cf} de la tabla {nombre_tabla}.")
 
@@ -232,3 +280,25 @@ def describe():
         print("Column Families:")
         for cf in column_familys[table]:
             print("\t", cf)
+
+def put(tabla, fila, colf):
+    # nombre_tabla, row_key, cf, column, value
+    global tablas, archivos_txt
+
+    #print(archivos_txt)
+
+    # Verificando si la tabla existe en el diccionario.
+    if tabla in archivos_txt:
+        # Agregando la celda a la tabla.
+        
+        s = colf.split()
+
+        for i in range(0, len(s), 2):
+            colfs = s[i].split(":")
+            valor = s[i+1]
+
+            # Agregando la celda a la tabla.
+            agregar_celda(tabla, fila, colf[0], colfs[1], valor)
+
+    else:
+        print(f"La tabla {tabla} no existe.")

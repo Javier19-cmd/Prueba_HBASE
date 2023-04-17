@@ -3,6 +3,11 @@ from metodos import *
 import json
 import os
 
+def limpiar(string):
+    string = string.replace("'", "")
+    string = string.replace(",", "")
+    return string
+
 # Hacer un main con opciones.
 def main():
 
@@ -25,38 +30,76 @@ def main():
             describe()
         
         elif palabras[0] == "create": # Crear una tabla.
-            coma, nombre, tabla = comando.split(maxsplit=2)
+            coma, nombre, column_fam = comando.split(maxsplit=2)
             # Se usará tabla y resto.
 
-            diccionario = json.loads(tabla)
-
-            column_families = []
-
-            for key, value in diccionario.items():
-                for k in value.keys():
-                    if isinstance(value[k], dict) and k not in column_families:
-                        column_families.append(k)
+            nombre = limpiar(nombre)
+            column_fam = column_fam.replace("'", "")
             
-            print(column_families)
 
-            nombre, tabla = crear_tabla(nombre, column_families, diccionario)
+            #print("Nombre: ", nombre)
 
-            # print("Nombre: ", nombre)
-            # print("Tabla: ", tabla)
 
-            # Creando el archivo.
-            archivo = fl.crear_archivo(nombre)
+            #print("Column families: ", column_fam)
 
-            # Escribiendo en el archivo.
-            files = fl.escribir_archivo(archivo, tabla)
+            # Guardando las cf en una lista.
+            column_families = column_fam.split(",")
+            # Quitando espacios.
+            column_families = [cf.strip() for cf in column_families]
+            #print("Column families: ", column_families)
 
-            # print("Archivo: ", archivo)
-            # print("Contenido: ", files)
+            lista = []
 
-            print("Archivo creado")
+            for cf in column_families:
+                lista.append(cf)
+
+            nombre, cf = crear_tabla(nombre, column_families)
+
+            print(nombre, cf)
+
+            fl.crear_archivo(nombre)
+
+            fl.escribir_txt(nombre)
+
+            # #print(lista)
+
+            # # Creando la tabla.
+            # nombre, cfam = crear_tabla(nombre, lista)
+
+            # print("Nombre: ", nombre, "tabla: ", cfam)
+
+            # # Creando el archivo.
+            # fl.escribir_txt(nombre, lista)
+
+            # diccionario = json.loads(tabla)
+
+            # column_families = []
+
+            # for key, value in diccionario.items():
+            #     for k in value.keys():
+            #         if isinstance(value[k], dict) and k not in column_families:
+            #             column_families.append(k)
+            
+            # print(column_families)
+
+            # nombre, tabla = crear_tabla(nombre, column_families, diccionario)
+
+            # # print("Nombre: ", nombre)
+            # # print("Tabla: ", tabla)
+
+            # # Creando el archivo.
+            # archivo = fl.crear_archivo(nombre)
+
+            # # Escribiendo en el archivo.
+            # files = fl.escribir_archivo(archivo, tabla)
+
+            # # print("Archivo: ", archivo)
+            # # print("Contenido: ", files)
+
+            # print("Archivo creado")
 
             # Guardando el archivo.
-            fl.escribir_txt(archivo, files)
+            #fl.escribir_txt(archivo, files)
         
         elif palabras[0] == "drop": # Comando para eliminar una tabla.
             coma, nombre = comando.split(maxsplit=1)
@@ -95,6 +138,20 @@ def main():
             for tabla in tablas: 
                 print(tabla)
 
+        elif palabras[0] == "put":
+
+            # put 'tabla', 'id', 'familia:propiedad_llave', 'valor'
+
+            coma, nombre_tabla, row_id, colfprop = comando.split(maxsplit=3)
+
+            # Quitando la coma del nombre.
+            nombre_tabla = limpiar(nombre_tabla)
+            row_id = limpiar(row_id)
+            colfprop = limpiar(colfprop)
+
+            # Qui
+
+            put(nombre_tabla, row_id, colfprop)
 
         
         elif palabras[0] == "quit": # Cerrar la simulación.

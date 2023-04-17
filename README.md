@@ -17,3 +17,4 @@
     drop nombre_tabla
 
     El código detecta el comando drop y luego el nombre_tabla. Esta tabla se elimina de la lista de tablas y del directorio.
+
