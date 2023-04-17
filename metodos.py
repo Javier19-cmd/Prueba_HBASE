@@ -4,6 +4,7 @@ import os
 import json
 import ast
 from datetime import datetime
+import file as fl
 
 # Diccionario que va a tener las column families de cada tabla.
 column_familys = {}
@@ -73,6 +74,10 @@ def crear_tabla(nombre, column_families):
         # Guardando esta data en el metadata.
         with open("metadata.txt", "w") as f:
             f.write(json.dumps(diccionario))
+
+        fl.crear_archivo("./tables/" + nombre)
+
+        fl.escribir_txt(nombre)
         
     # Retornar el nombre y la tabla entera.
     return nombre
@@ -117,57 +122,50 @@ def obtener_celdas_columna(nombre_tabla, cf):
     # Retornar las celdas agregadas a la columna familiar
     return tablas[nombre_tabla][cf]
 
-# def listar_filas(nombre_tabla):
-#     # Verificar si la tabla existe
-#     if nombre_tabla not in tablas:
-#         print(f"La tabla {nombre_tabla} no existe.")
-#         return []
+def listar(): # Método para listar las tablas de la metadata.
 
-#     # Crear una lista para almacenar las filas encontradas
-#     filas = []
-
-#     # Recorrer todas las filas de la tabla
-#     for row_key in tablas[nombre_tabla]:
-#         # Verificar que la fila no sea la fila de timestamp
-#         if row_key != "timestamp":
-#             # Verificar si la fila tiene celdas
-#             tiene_celdas = False
-#             for cf_name, cf_data in tablas[nombre_tabla][row_key].items():
-#                 if cf_data:
-#                     tiene_celdas = True
-#                     break
-            
-#             # Si la fila tiene celdas, agregarla a la lista
-#             if tiene_celdas:
-#                 filas.append(row_key)
-
-#     # Retornar la lista de filas
-#     return filas
-
-def listar():
-
-    global tablas
-
-    # Lista para almacenar los nombres de las tablas.
-    nombre_tablas = []
-
-    # Recorrer el diccionario de tablas.
-    for tabla in tablas:
-        nombre_tablas.append(tabla)
-
-    return nombre_tablas
+    # Abriendo el archivo de metadata.
+    with open("metadata.txt", "r") as f:
+        diccionario = json.load(f)
+        
+        for tabla in diccionario.keys():
+            print(tabla)
 
 # Función para eliminar una tabla de HBase.
 def eliminar_tabla(nombre):
+    global archivos_txt
 
     # Verificando si la tabla existe en el diccionario.
-    if nombre in tablas:
-        # Eliminando la tabla del diccionario.
-        del tablas[nombre]
-        print(f"Tabla {nombre} eliminada exitosamente.")
-
+    if nombre in archivos_txt:
         # Eliminando la tabla también de la lista.
-        archivos_txt.remove(nombre)
+        #archivos_txt.remove(nombre)
+
+        # Eliminando la tabla del archivo metadata.
+        with open("metadata.txt", "r") as f:
+            diccionario = json.load(f)
+        
+
+        print(diccionario[nombre]["enabled"])
+
+        # Verificando que el enable de la tabla en false.
+        if diccionario[nombre]["enabled"] == False:
+
+            del diccionario[nombre]
+
+            # Eliminando de la lista de archivos el nombre del archivo.
+            if nombre in archivos_txt:
+                
+                archivos_txt.remove(nombre)
+
+                fl.eliminar_archivo(nombre)
+        
+        else: 
+            print("La tabla no está deshabilitada.")
+            return
+
+        with open("metadata.txt", "w") as f:
+            f.write(json.dumps(diccionario))
+            
 
     else:
         print(f"La tabla {nombre} no existe.")
@@ -179,48 +177,35 @@ def eliminar_todas_tablas():
 
     # Quitarle la extensión .txt a los nombres en archivos_txt, si algún 
     # string lo tiene.
-    
 
-    # Recorrer todas las tablas en la base de datos
-    for tabla in list(tablas.keys()):
-        # Eliminar todas las filas de la tabla
-        del tablas[tabla]
+    for archivo in archivos_txt:
+        eliminar_tabla(archivo)
 
-        # Si el nombre no tiene .txt, agregárselo.
-        if not tabla.endswith(".txt"):
-            tabla += ".txt"
-
-        #print("Tabla: ", tabla)
-
-        # Si en caso el nombre tiene extensión, se le quita y se elimina de la lista.
-        if tabla.endswith(".txt"):
-            nombre_sin_extension = tabla.split(".")[0]
-
-            if nombre_sin_extension in archivos_txt:
-                #del tablas[nombre_sin_extension]
-                archivos_txt.remove(nombre_sin_extension)
-        else: 
-            
-            del tablas[tabla]
-
-            archivos_txt.remove(tabla)
-    
-    # Eliminar todas las tablas de la base de datos
-    tablas.clear()
-
-    print("Todas las tablas han sido eliminadas.")
-    print("Tablas: ", tablas)
+    # Limpiando la lista.
+    archivos_txt.clear()
 
 # Método para describir las tablas que se tienen.
-def describe():
+def describe(tabla):
+    print("Tabla: ", tabla)
 
-    print("Column family: ", column_familys)
+    # Abriendo el metadata.txt.
+    with open("metadata.txt", "r") as f:
+        diccionario = json.load(f)
 
-    for table in column_familys:
-        print("Tabla:", table)
-        print("Column Families:")
-        for cf in column_familys[table]:
-            print("\t", cf)
+        #print("Diccionario: ", diccionario)
+
+        if tabla in diccionario:
+            #print("Column families: ", diccionario[tabla]["families"])
+
+            lista = diccionario[tabla]["families"]
+
+            for i in lista:
+                print("Familia: ", i)
+            
+            print(len(lista), " row(s)")
+        
+        else:
+            print(f"La tabla {tabla} no existe.")
 
 def put(tabla, fila, colf):
     # nombre_tabla, row_key, cf, column, value

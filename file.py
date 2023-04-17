@@ -9,8 +9,10 @@ files = {}
 archivos_txt = []
 
 # Guardando los nombres de los .txt ya creados en una simulación anterior.
-carpeta = os.getcwd()
-archivos_txt = [archivo for archivo in os.listdir(carpeta) if archivo.endswith('.txt')]
+root = os.path.dirname(os.path.relpath(__file__))
+ruta = os.path.join(root, 'tables')
+
+archivos_txt = [archivo for archivo in os.listdir(ruta) if archivo.endswith('.txt')]
 
 for i, nombre_archivo in enumerate(archivos_txt):
     if nombre_archivo.endswith('.txt'):
@@ -54,13 +56,18 @@ def escribir_txt(nombre):
 
 # Método para eliminar archivo.
 def eliminar_archivo(nombre):
-    if nombre in files:
-        del files[nombre]
 
+    global archivos_txt
+
+    if nombre in archivos_txt:
         # Eliminando el archivo de la lista también.
         archivos_txt.remove(nombre)
 
-        os.remove(nombre + ".txt")
+        # Verificando que la tabla si el enable en false.
+
+        #os.remove("./tables/" + nombre + ".txt")
+        # Eliminando el archivo del directorio /tables.
+        os.remove("./tables/" + nombre + ".txt")
 
     else:
         print("El archivo {nombre} no existe.")
@@ -68,7 +75,7 @@ def eliminar_archivo(nombre):
 # Método para eliminar todos los archivos.
 def eliminar_archivos():
 
-    for file in list(files):
+    for file in list(archivos_txt):
 
         eliminar_archivo(file)
     

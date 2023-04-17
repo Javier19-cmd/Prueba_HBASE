@@ -20,7 +20,12 @@ def main():
         palabras = comando.split()
 
         if palabras[0] == "describe": # Imprimir las colum families.
-            describe()
+
+            coma, nombre = comando.split(maxsplit=1)
+
+            nombre = limpiar(nombre)
+
+            describe(nombre)
         
         elif palabras[0] == "create": # Crear una tabla.
             coma, nombre, column_fam = comando.split(maxsplit=2)
@@ -42,47 +47,31 @@ def main():
             nombre = crear_tabla(nombre, column_families)
 
             print(nombre)
-
-            fl.crear_archivo("./tables/" + nombre)
-
-            fl.escribir_txt(nombre)
         
         elif palabras[0] == "drop": # Comando para eliminar una tabla.
+
+            # Tiene que estar deshabilitada.
+
             coma, nombre = comando.split(maxsplit=1)
+
+            nombre = limpiar(nombre)
             
             print("Eliminando tabla")
 
             eliminar_tabla(nombre) # Eliminando la tabla.
-
-            fl.eliminar_archivo(nombre) # Eliminando archivo.
         
         elif palabras[0] == "drop_all":
+
+            # Siempre siguiendo lo que están deshabilitados.
 
             print("Eliminando todas las tablas")
             
             # Eliminando las tablas.
             eliminar_todas_tablas()
-
-            # Eliminando los archivos.
-            fl.eliminar_archivos()
         
         elif palabras[0] == "list":
 
-            #coma, nombret = comando.split(maxsplit=1)
-
-            #print("Nombret: ", nombret)
-
-            # nombre_tabla = input("Ingrese el nombre de la tabla: ")
-
-            # Listando las filas de la tabla en los métodos.
-            # filas = listar_filas(nombret)
-
-            # print("Filas: ", filas)
-
-            tablas = listar()
-
-            for tabla in tablas: 
-                print(tabla)
+            listar()
 
         elif palabras[0] == "put":
 
