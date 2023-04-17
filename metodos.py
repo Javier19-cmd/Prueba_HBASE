@@ -276,7 +276,54 @@ def is_enabled(tabla):
         
     else:
         print(f"La tabla {tabla} no existe.")
-    
+
+def get(tabla, fila):
+    if tabla in archivos_txt:
+        with open("./tables/" + tabla + ".txt", "r") as f:
+            diccionario = json.load(f)
+        
+        print(diccionario[fila])
+        
+    else:
+        print(f"La tabla {tabla} no existe.")
+        
+def add_column_family(tabla, cf):
+    if tabla in archivos_txt:
+        with open("metadata.txt", "r") as f:
+            diccionario = json.load(f)
+        
+        familias = diccionario[tabla]["families"]
+        familias.append(cf)
+        diccionario[tabla]["families"] = list(set(familias))
+        
+        with open("metadata.txt", 'w') as f:
+            json.dump(diccionario, f)
+        
+    else:
+        print(f"La tabla {tabla} no existe.")
+        
+def delete_column_family(tabla, cf):
+    if tabla in archivos_txt:
+        with open("metadata.txt", "r") as f:
+            diccionario = json.load(f)
+        
+        familias = diccionario[tabla]["families"]
+        familias.remove(cf)
+        diccionario[tabla]["families"] = familias
+        
+        with open("metadata.txt", 'w') as f:
+            json.dump(diccionario, f)
+            
+        with open("./tables/" + tabla + ".txt", "r") as f:
+            diccionario = json.load(f)
+        
+        for key, value in diccionario.items():
+            if cf in value:
+                del diccionario[key][cf]
+        
+        with open("./tables/" + tabla + ".txt", "w") as f:
+            diccionario = json.dump(diccionario, f)
+
 def truncate(tabla):
     if tabla in archivos_txt:
         with open("./tables/" + tabla + ".txt", "w") as f:

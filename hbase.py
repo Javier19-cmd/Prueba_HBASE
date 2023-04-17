@@ -7,6 +7,11 @@ def limpiar(string):
     string = string.replace(",", "")
     return string
 
+def limpiar2(string):
+    string = string.replace("'", "")
+    string = string.replace(" ", "")
+    return string
+
 # Hacer un main con opciones.
 def main():
 
@@ -90,29 +95,44 @@ def main():
             
         elif palabras[0] == "disable":
             
-            coma, nombre_tabla = comando.split(maxsplit=1)
+            comando = ''.join(palabras[1:])
+            nombre_tabla = comando
             
-            nombre_tabla = limpiar(nombre_tabla)
+            nombre_tabla = limpiar2(nombre_tabla)
             
             disable(nombre_tabla)
         
         
         elif palabras[0] == "enable":
             
-            coma, nombre_tabla = comando.split(maxsplit=1)
+            comando = ''.join(palabras[1:])
+            nombre_tabla = comando
             
-            nombre_tabla = limpiar(nombre_tabla)
+            nombre_tabla = limpiar2(nombre_tabla)
             
             enable(nombre_tabla)
 
         
         elif palabras[0] == "is_enabled":
             
-            coma, nombre_tabla = comando.split(maxsplit=1)
+            comando = ''.join(palabras[1:])
+            nombre_tabla = comando
             
             nombre_tabla = limpiar(nombre_tabla)
             
             is_enabled(nombre_tabla)    
+    
+        
+        elif palabras[0] == "get":
+            
+            comando = ''.join(palabras[1:])
+            nombre_tabla, row_id = comando.split(",", maxsplit=1)
+            
+            nombre_tabla = limpiar2(nombre_tabla)
+            row_id = limpiar2(row_id)
+            
+            get(nombre_tabla, row_id)  
+
 
         elif palabras[0] == "truncate":
             coma, nombre_tabla = comando.split(maxsplit=1)
@@ -130,6 +150,32 @@ def main():
 
             delete_all(nombre_tabla, row_id)
 
+        
+        elif palabras[0] == "alter":
+            
+            comando = ''.join(palabras[1:])
+            nombre_tabla, params = comando.split(",", maxsplit=1)
+            
+            nombre_tabla = limpiar2(nombre_tabla)
+            params = limpiar2(params.replace("{", "").replace("}", ""))
+            
+            params = params.split(",")
+            
+            
+            if params[0].startswith("NAME"):
+                nombre_cf = params[0].split("=>")[1]
+                
+                if len(params) > 1:
+                    if params[1].startswith("METHOD") and params[1].endswith("delete"):
+                        delete_column_family(nombre_tabla, nombre_cf)
+                    else:
+                        print("Comando incorrecto")
+                else:
+                    add_column_family(nombre_tabla, nombre_cf)
+            else:
+                print("Comando incorrecto")
+            
+        
         elif palabras[0] == "quit": # Cerrar la simulación.
 
             print("Saliendo del simulador")
