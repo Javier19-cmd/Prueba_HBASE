@@ -16,20 +16,6 @@ for i, nombre_archivo in enumerate(archivos_txt):
     if nombre_archivo.endswith('.txt'):
         archivos_txt[i] = nombre_archivo[:-4]  # elimina los últimos 4 caracteres (.txt)
 
-def cargar_archivos():
-    global files
-
-    for archivo in archivos_txt:
-        with open(archivo + ".txt", "r") as f:
-            contenido = f.read()
-            #tablas = ast.literal_eval(contenido)
-
-            # # Quitarle al string del archivo el .txt.
-            # arch = archivo.split(".")[0]
-
-            # Cargando primero el nombre de cada archivo en la tabla.
-            files[archivo] = ast.literal_eval(contenido)
-
 # Función para crear un archivo.
 def crear_archivo(nombre):
     if nombre in files:
@@ -61,11 +47,9 @@ def leer_archivo(nombre):
 # Función para escribir el .txt.
 def escribir_txt(nombre):
 
-    fp = {}
-
     # Guardando el diccionario en un archivo de texto.
-    with open(nombre + ".txt", "w") as f:
-        json.dump(fp)
+    with open("./tables/" + nombre + ".txt", "w") as f:
+        f.write("{}")
 
 
 # Método para eliminar archivo.

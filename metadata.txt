@@ -1,1 +1,1 @@
-{"hola2": {"timestamp": 1681697090388, "enabled": "1"}, "hola": {"timestamp": 1681697764166, "enabled": "1"}}
+{"prueba": {"timestamp": 1681702315003, "enabled": true, "families": ["cf1", "cf2"]}}

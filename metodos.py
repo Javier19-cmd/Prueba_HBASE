@@ -5,16 +5,14 @@ import json
 import ast
 from datetime import datetime
 
-# Diccionario para almacenar las tablas
-tablas = {}
-
 # Diccionario que va a tener las column families de cada tabla.
 column_familys = {}
 
 # Guardando los nombres de los archivos anteriormente creados.
 archivos_txt = []
 
-ruta = os.getcwd()
+root = os.path.dirname(os.path.relpath(__file__))
+ruta = os.path.join(root, 'tables')
 
 archivos_txt = [archivo for archivo in os.listdir(ruta) if archivo.endswith('.txt')]
 
@@ -48,113 +46,56 @@ def cargar_archivos():
 
 
 def ver_tablas():
-    print(tablas)        
+    print(archivos_txt)        
 
 
 # Función para crear una tabla
 def crear_tabla(nombre, column_families):
-    if nombre in tablas:
+    if nombre in archivos_txt:
         print("La tabla ya existe.")
     else:
-        tablas[nombre] = {}
         archivos_txt.append(nombre)
-
-        # Guardando cada tabla con su column families en un diccionario aparte.
-        #column_family[nombre] = column_families
-
-        # Agregar column families a la tabla
-        for cf in column_families:
-            tablas[nombre][cf] = {}
-
-        # # Agregar los datos a la tabla
-        # for row_key, cf_data in datos.items():
-        #     for cf_name, cf_values in cf_data.items():
-        #         for column, value in cf_values.items():
-        #             agregar_celda(nombre, row_key, cf_name, column, value)
-
-        # Generar un row key único y obtener el timestamp actual en milisegundos
-        
-        #print("Tabla: ", tablas)
-        
-        row_key = str(uuid.uuid4())
+    
         timestamp = int(round(time.time() * 1000))
-        enable = "1"
-
-        # Agregar el row key y el timestamp a la tabla
-        #tablas[nombre]["timestamp"] = {row_key: timestamp}
-
+        enable = True
         diccionario = {}
 
         with open("metadata.txt", "r") as f: 
             # Guardando lo que hay en el archivo de metadata en el diccionario.
-            
             contenido = f.read()
 
         diccionario = json.loads(contenido)
         print(diccionario)
 
         # Agregando el nombre de la tabla, el timestamp y el enabled a un diccionario.
-        diccionario[nombre] = {"timestamp": timestamp, "enabled": enable}
+        diccionario[nombre] = {"timestamp": timestamp, "enabled": enable, "families": column_families}
 
         # Guardando esta data en el metadata.
         with open("metadata.txt", "w") as f:
             f.write(json.dumps(diccionario))
         
-
-        # # Guardando el nombre de la tabla, el timestamp y el enabled de la tabla en un archivo txt.
-        # with open("metadata.txt", "w") as f:
-        #     f.write(str(nombre), str(timestamp), str(enable))
-
-        # print(f"Tabla {nombre} creada exitosamente.")
     # Retornar el nombre y la tabla entera.
-    return nombre, tablas[nombre]
+    return nombre
 
 # Función para agregar una celda a una tabla
-def agregar_celda(nombre_tabla, row_key, cf, column, value):
+def agregar_celda(diccionario, row_key, cf, column, value):
     # Verificar si la tabla existe
     
-    diccionario = {}
+    fecha_hora_actual = datetime.now()
 
-    with open(nombre_tabla + ".txt", "r+") as f:
+    if row_key not in diccionario:
+        diccionario[row_key] = {}
+    
+    if cf not in diccionario[row_key]:
+        diccionario[row_key][cf] = {}
+    
+    if column not in diccionario[row_key][cf]:
+        diccionario[row_key][cf][column] = {}
+    
+    diccionario[row_key][cf][column]["value"] = value
+    diccionario[row_key][cf][column]["timestamp"] = str(fecha_hora_actual)
 
-        # Guardando lo que hay en el archivo de metadata en el diccionario.
-        #contenido = f.read()
-
-        diccionario = json.load(f)
-        
-        fecha_hora_actual = datetime.now()
-
-        if row_key not in diccionario:
-            diccionario[row_key] = {}
-        
-        if cf not in diccionario[row_key]:
-            diccionario[row_key][cf] = {}
-        
-        if column not in diccionario[row_key][cf]:
-            diccionario[row_key][cf][column] = {}
-        
-        
-
-        diccionario[row_key][cf][column]["value"] = value
-        diccionario[row_key][cf][column]["timestamp"] = fecha_hora_actual
-
-    # # Verificar si el row key existe en la tabla
-    # if row_key not in tablas[nombre_tabla]:
-    #     # Si el row key no existe, agregarlo a la tabla
-    #     tablas[nombre_tabla][row_key] = {}
-
-    # # Verificar si la columna familiar existe en la tabla
-    # if cf not in tablas[nombre_tabla]:
-    #     print(f"La columna familiar {cf} no existe en la tabla {nombre_tabla}.")
-    #     return
-
-    # # Generar un timestamp para la celda
-    # timestamp = int(round(time.time() * 1000))
-
-    # # Agregar la celda a la tabla con su respectivo timestamp
-    # tablas[nombre_tabla][cf][(column, row_key)] = (value, timestamp)
-
-    #print(f"Celda ({column}, {row_key}, {value}, {timestamp}) agregada a la columna familiar {cf} de la tabla {nombre_tabla}.")
+    return diccionario
 
 # Función para crear column families
 def crear_column_families(num_cfs):
@@ -283,7 +224,7 @@ def describe():
 
 def put(tabla, fila, colf):
     # nombre_tabla, row_key, cf, column, value
-    global tablas, archivos_txt
+    global archivos_txt
 
     #print(archivos_txt)
 
@@ -293,12 +234,20 @@ def put(tabla, fila, colf):
         
         s = colf.split()
 
-        for i in range(0, len(s), 2):
-            colfs = s[i].split(":")
-            valor = s[i+1]
+        diccionario = {}
+        respuesta = None
 
-            # Agregando la celda a la tabla.
-            agregar_celda(tabla, fila, colf[0], colfs[1], valor)
+        with open("./tables/" + tabla + ".txt", "r") as f:
+            diccionario = json.load(f)
+            for i in range(0, len(s), 2):
+                colfs = s[i].split(":")
+                valor = s[i+1]
+
+                # Agregando la celda a la tabla.
+                respuesta = agregar_celda(diccionario, fila, colfs[0], colfs[1], valor)
+                
+        with open("./tables/" + tabla + ".txt", 'w') as f:
+            json.dump(respuesta, f)
 
     else:
         print(f"La tabla {tabla} no existe.")
