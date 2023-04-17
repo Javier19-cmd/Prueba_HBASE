@@ -113,7 +113,13 @@ def main():
             nombre_tabla = limpiar(nombre_tabla)
             
             is_enabled(nombre_tabla)    
-    
+
+        elif palabras[0] == "truncate":
+            coma, nombre_tabla = comando.split(maxsplit=1)
+            
+            nombre_tabla = limpiar(nombre_tabla)
+            
+            truncate(nombre_tabla)
     
         elif palabras[0] == "quit": # Cerrar la simulación.
 

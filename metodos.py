@@ -276,3 +276,12 @@ def is_enabled(tabla):
         
     else:
         print(f"La tabla {tabla} no existe.")
+    
+def truncate(tabla):
+    if tabla in archivos_txt:
+        with open("./tables/" + tabla + ".txt", "w") as f:
+            f.write("{}")
+        
+        print("Tabla truncada.")
+    else:
+        print(f"La tabla {tabla} no existe.")
