@@ -1,1 +1,1 @@
-{}
+{"prueba": {"timestamp": 1681719113261, "enabled": true, "families": ["cf1", "cf2"]}}

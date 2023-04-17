@@ -148,7 +148,7 @@ def main():
             nombre_tabla = limpiar(nombre_tabla)
             row_id = limpiar(row_id)
 
-            delete_all(nombre_tabla, row_id)
+            eliminar_todo(nombre_tabla, row_id)
 
         
         elif palabras[0] == "alter":
@@ -175,7 +175,13 @@ def main():
             else:
                 print("Comando incorrecto")
             
-        
+        elif palabras[0] == "count":
+            coma, nombre_tabla = comando.split(maxsplit=1)
+            
+            nombre_tabla = limpiar(nombre_tabla)
+            
+            print(f"Total de filas: {contar(nombre_tabla)}")
+
         elif palabras[0] == "quit": # Cerrar la simulación.
 
             print("Saliendo del simulador")

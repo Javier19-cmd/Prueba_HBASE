@@ -340,7 +340,7 @@ def eliminar_celda(diccionario, row):
     del diccionario[row]
     return diccionario
 
-def delete_all(tabla, id):
+def eliminar_todo(tabla, id):
     # nombre_tabla, row_key, cf, column, value
     global archivos_txt
 
@@ -361,5 +361,17 @@ def delete_all(tabla, id):
             json.dump(diccionario, f)
         print("Fila eliminada")
 
+    else:
+        print(f"La tabla {tabla} no existe.")
+
+def contar(tabla):
+    if tabla in archivos_txt:
+        diccionario = {}
+
+        with open("./tables/" + tabla + ".txt", "r") as f:
+            diccionario = json.load(f)
+            
+            # Eliminando la celda a la tabla.
+            return len(diccionario)
     else:
         print(f"La tabla {tabla} no existe.")
