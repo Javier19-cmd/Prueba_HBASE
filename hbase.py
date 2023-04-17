@@ -1,13 +1,7 @@
 import file as fl
 from metodos import *
 
-
 def limpiar(string):
-    string = string.replace("'", "")
-    string = string.replace(",", "")
-    return string
-
-def limpiar2(string):
     string = string.replace("'", "")
     string = string.replace(" ", "")
     return string
@@ -25,15 +19,16 @@ def main():
         palabras = comando.split()
 
         if palabras[0] == "describe": # Imprimir las colum families.
-
-            coma, nombre = comando.split(maxsplit=1)
+            comando = ''.join(palabras[1:])
+            nombre = comando
 
             nombre = limpiar(nombre)
 
             describe(nombre)
         
         elif palabras[0] == "create": # Crear una tabla.
-            coma, nombre, column_fam = comando.split(maxsplit=2)
+            comando = ''.join(palabras[1:])
+            nombre, column_fam = comando.split(maxsplit=1)
 
             # Se usará tabla y resto.
             nombre = limpiar(nombre)
@@ -54,8 +49,8 @@ def main():
         elif palabras[0] == "drop": # Comando para eliminar una tabla.
 
             # Tiene que estar deshabilitada.
-
-            coma, nombre = comando.split(maxsplit=1)
+            comando = ''.join(palabras[1:])
+            nombre = comando
 
             nombre = limpiar(nombre)
             
@@ -79,8 +74,8 @@ def main():
         elif palabras[0] == "put":
 
             # put 'tabla', 'id', 'familia:propiedad_llave', 'valor'
-
-            coma, nombre_tabla, row_id, colfprop = comando.split(maxsplit=3)
+            comando = ''.join(palabras[1:])
+            nombre_tabla, row_id, colfprop = comando.split(maxsplit=2)
 
             # Quitando la coma del nombre.
             nombre_tabla = limpiar(nombre_tabla)
@@ -98,7 +93,7 @@ def main():
             comando = ''.join(palabras[1:])
             nombre_tabla = comando
             
-            nombre_tabla = limpiar2(nombre_tabla)
+            nombre_tabla = limpiar(nombre_tabla)
             
             disable(nombre_tabla)
         
@@ -108,7 +103,7 @@ def main():
             comando = ''.join(palabras[1:])
             nombre_tabla = comando
             
-            nombre_tabla = limpiar2(nombre_tabla)
+            nombre_tabla = limpiar(nombre_tabla)
             
             enable(nombre_tabla)
 
@@ -120,7 +115,7 @@ def main():
             
             nombre_tabla = limpiar(nombre_tabla)
             
-            is_enabled(nombre_tabla)    
+            print(is_enabled(nombre_tabla))
     
         
         elif palabras[0] == "get":
@@ -128,21 +123,23 @@ def main():
             comando = ''.join(palabras[1:])
             nombre_tabla, row_id = comando.split(",", maxsplit=1)
             
-            nombre_tabla = limpiar2(nombre_tabla)
-            row_id = limpiar2(row_id)
+            nombre_tabla = limpiar(nombre_tabla)
+            row_id = limpiar(row_id)
             
             get(nombre_tabla, row_id)  
 
 
         elif palabras[0] == "truncate":
-            coma, nombre_tabla = comando.split(maxsplit=1)
+            comando = ''.join(palabras[1:])
+            coma, nombre_tabla = comando
             
             nombre_tabla = limpiar(nombre_tabla)
             
             truncate(nombre_tabla)
     
         elif palabras[0] == "deleteall":
-            coma, nombre_tabla, row_id = comando.split(maxsplit=2)
+            comando = ''.join(palabras[1:])
+            nombre_tabla, row_id = comando.split(maxsplit=1)
 
             # Quitando la coma del nombre.
             nombre_tabla = limpiar(nombre_tabla)
@@ -151,7 +148,8 @@ def main():
             eliminar_todo(nombre_tabla, row_id)
         
         elif palabras[0] == "delete":
-            coma, nombre_tabla, row_id, colfprop = comando.split(maxsplit=3)
+            comando = ''.join(palabras[1:])
+            nombre_tabla, row_id, colfprop = comando.split(maxsplit=2)
 
             # Quitando la coma del nombre.
             nombre_tabla = limpiar(nombre_tabla)
@@ -167,8 +165,8 @@ def main():
             comando = ''.join(palabras[1:])
             nombre_tabla, params = comando.split(",", maxsplit=1)
             
-            nombre_tabla = limpiar2(nombre_tabla)
-            params = limpiar2(params.replace("{", "").replace("}", ""))
+            nombre_tabla = limpiar(nombre_tabla)
+            params = limpiar(params.replace("{", "").replace("}", ""))
             
             params = params.split(",")
             
@@ -187,14 +185,16 @@ def main():
                 print("Comando incorrecto")
             
         elif palabras[0] == "count":
-            coma, nombre_tabla = comando.split(maxsplit=1)
+            comando = ''.join(palabras[1:])
+            nombre_tabla = comando
             
             nombre_tabla = limpiar(nombre_tabla)
             
             print(f"Total de filas: {contar(nombre_tabla)}")
 
         elif palabras[0] == "scan":
-            coma, nombre_tabla = comando.split(maxsplit=1)
+            comando = ''.join(palabras[1:])
+            nombre_tabla = comando
             
             nombre_tabla = limpiar(nombre_tabla)
             

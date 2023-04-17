@@ -149,13 +149,13 @@ def eliminar_tabla(nombre):
         # Eliminando la tabla del archivo metadata.
         with open("metadata.txt", "r") as f:
             diccionario = json.load(f)
-        
-
-        print(diccionario[nombre]["enabled"])
 
         # Verificando que el enable de la tabla en false.
-        if diccionario[nombre]["enabled"] == False:
+        if is_enabled(nombre):
+            print("La tabla no está deshabilitada.")
 
+        else: 
+            
             del diccionario[nombre]
 
             # Eliminando de la lista de archivos el nombre del archivo.
@@ -164,9 +164,7 @@ def eliminar_tabla(nombre):
                 archivos_txt.remove(nombre)
 
                 fl.eliminar_archivo(nombre)
-        
-        else: 
-            print("La tabla no está deshabilitada.")
+            
             return
 
         with open("metadata.txt", "w") as f:
@@ -273,7 +271,7 @@ def is_enabled(tabla):
         with open("metadata.txt", "r") as f:
             diccionario = json.load(f)
         
-        print(diccionario[tabla]["enabled"])
+        return diccionario[tabla]["enabled"]
         
     else:
         print(f"La tabla {tabla} no existe.")
@@ -307,23 +305,25 @@ def delete_column_family(tabla, cf):
     if tabla in archivos_txt:
         with open("metadata.txt", "r") as f:
             diccionario = json.load(f)
-        
-        familias = diccionario[tabla]["families"]
-        familias.remove(cf)
-        diccionario[tabla]["families"] = familias
-        
-        with open("metadata.txt", 'w') as f:
-            json.dump(diccionario, f)
+
+        # Verificando que el enable de la tabla en false.
+        if is_enabled(tabla):
+            familias = diccionario[tabla]["families"]
+            familias.remove(cf)
+            diccionario[tabla]["families"] = familias
             
-        with open("./tables/" + tabla + ".txt", "r") as f:
-            diccionario = json.load(f)
-        
-        for key, value in diccionario.items():
-            if cf in value:
-                del diccionario[key][cf]
-        
-        with open("./tables/" + tabla + ".txt", "w") as f:
-            diccionario = json.dump(diccionario, f)
+            with open("metadata.txt", 'w') as f:
+                json.dump(diccionario, f)
+                
+            with open("./tables/" + tabla + ".txt", "r") as f:
+                diccionario = json.load(f)
+            
+            for key, value in diccionario.items():
+                if cf in value:
+                    del diccionario[key][cf]
+            
+            with open("./tables/" + tabla + ".txt", "w") as f:
+                diccionario = json.dump(diccionario, f)
 
 def truncate(tabla):
     if tabla in archivos_txt:
