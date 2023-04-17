@@ -19,15 +19,18 @@ for i, nombre_archivo in enumerate(archivos_txt):
         archivos_txt[i] = nombre_archivo[:-4]  # elimina los últimos 4 caracteres (.txt)
 
 # Función para crear un archivo.
-def crear_archivo(nombre):
+def crear_archivo(nombre, nombr):
+
+    #print("Nombre en crear archivo: ", nombre)
+
     if nombre in files:
         print("El archivo ya existe.")
     else:
         files[nombre] = ""
-        archivos_txt.append(nombre)
+        archivos_txt.append(nombr)
 
     
-    return nombre
+    #return nombre
 
 # Función para escribir archivos.
 def escribir_archivo(nombre):
@@ -59,6 +62,9 @@ def eliminar_archivo(nombre):
 
     global archivos_txt
 
+    print("Nombre del archivo: ", nombre)
+    print("Archivos: ", archivos_txt)
+
     if nombre in archivos_txt:
         # Eliminando el archivo de la lista también.
         archivos_txt.remove(nombre)
@@ -66,6 +72,9 @@ def eliminar_archivo(nombre):
         # Verificando que la tabla si el enable en false.
 
         #os.remove("./tables/" + nombre + ".txt")
+
+        print("Nombre: ", nombre)
+
         # Eliminando el archivo del directorio /tables.
         os.remove("./tables/" + nombre + ".txt")
 
@@ -74,6 +83,8 @@ def eliminar_archivo(nombre):
 
 # Método para eliminar todos los archivos.
 def eliminar_archivos():
+
+    global archivos_txt
 
     for file in list(archivos_txt):
 

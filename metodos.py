@@ -75,10 +75,11 @@ def crear_tabla(nombre, column_families):
         with open("metadata.txt", "w") as f:
             f.write(json.dumps(diccionario))
 
-        fl.crear_archivo("./tables/" + nombre)
+        fl.crear_archivo("./tables/" + nombre, nombre)
 
         fl.escribir_txt(nombre)
-        
+    
+    print("Nombre antes de ser retornado: ", nombre)
     # Retornar el nombre y la tabla entera.
     return nombre
 
@@ -135,6 +136,10 @@ def listar(): # Método para listar las tablas de la metadata.
 def eliminar_tabla(nombre):
     global archivos_txt
 
+    # print("Archivos: ", archivos_txt)
+
+    # print("Nombre: ", nombre in archivos_txt)
+
     # Verificando si la tabla existe en el diccionario.
     if nombre in archivos_txt:
         # Eliminando la tabla también de la lista.
@@ -173,16 +178,15 @@ def eliminar_tabla(nombre):
 # Función para elimintar todas las tablas de la base de datos.
 def eliminar_todas_tablas():
 
-    print("Archivos: ", type(archivos_txt))
+    global archivos_txt
 
-    # Quitarle la extensión .txt a los nombres en archivos_txt, si algún 
-    # string lo tiene.
+    for tabla in archivos_txt:
+        eliminar_tabla(tabla)
 
-    for archivo in archivos_txt:
-        eliminar_tabla(archivo)
+        if len(archivos_txt) > 0:
+            eliminar_todas_tablas()
 
-    # Limpiando la lista.
-    archivos_txt.clear()
+    print("Archivos: ", archivos_txt)
 
 # Método para describir las tablas que se tienen.
 def describe(tabla):

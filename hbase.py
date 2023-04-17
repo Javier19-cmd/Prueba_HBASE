@@ -45,8 +45,6 @@ def main():
                 lista.append(cf)
 
             nombre = crear_tabla(nombre, column_families)
-
-            print(nombre)
         
         elif palabras[0] == "drop": # Comando para eliminar una tabla.
 
