@@ -1,10 +1,10 @@
-import uuid
 import time
 import os
 import json
 import ast
 from datetime import datetime
 import file as fl
+import copy
 
 # Diccionario que va a tener las column families de cada tabla.
 column_familys = {}
@@ -333,7 +333,7 @@ def truncate(tabla):
     else:
         print(f"La tabla {tabla} no existe.")
 
-def eliminar_celda(diccionario, row):
+def eliminar_fila(diccionario, row):
     if row not in diccionario:
         print("No existe esta fila, row_key inválido.")
         return diccionario
@@ -355,7 +355,7 @@ def eliminar_todo(tabla, id):
             diccionario = json.load(f)
             
             # Eliminando la celda a la tabla.
-            diccionario = eliminar_celda(diccionario, id)
+            diccionario = eliminar_fila(diccionario, id)
                 
         with open("./tables/" + tabla + ".txt", 'w') as f:
             json.dump(diccionario, f)
@@ -373,5 +373,55 @@ def contar(tabla):
             
             # Eliminando la celda a la tabla.
             return len(diccionario)
+    else:
+        print(f"La tabla {tabla} no existe.")
+
+
+def delete(tabla, fila, colf):
+    # nombre_tabla, row_key, cf, column, value
+    global archivos_txt
+
+    #print(archivos_txt)
+
+    # Verificando si la tabla existe en el diccionario.
+    if tabla in archivos_txt:
+        # Agregando la celda a la tabla.
+        
+        s = colf.split()
+
+        diccionario = {}
+
+        with open("./tables/" + tabla + ".txt", "r") as f:
+            diccionario = json.load(f)
+            diccionario_copy = copy.deepcopy(diccionario)
+            eliminar = True
+            for i in s:
+                colfs = i.split(":")
+
+                # Agregando la celda a la tabla.
+                if fila not in diccionario_copy:
+                    print("Fila inválida")
+                    eliminar = False
+                    break
+                
+                if colfs[0] not in diccionario_copy[fila]:
+                    print("Familia inválida")
+                    eliminar = False
+                    break
+                
+                if colfs[1] not in diccionario_copy[fila][colfs[0]]:
+                    print("Propiedad inválida")
+                    eliminar = False
+                    break
+                
+                del diccionario_copy[fila][colfs[0]][colfs[1]]
+                
+        if eliminar == True:
+            diccionario = diccionario_copy
+            print("Propiedad eliminada")
+
+        with open("./tables/" + tabla + ".txt", 'w') as f:
+            json.dump(diccionario, f)
+
     else:
         print(f"La tabla {tabla} no existe.")

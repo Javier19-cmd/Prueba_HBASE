@@ -149,7 +149,18 @@ def main():
             row_id = limpiar(row_id)
 
             eliminar_todo(nombre_tabla, row_id)
+        
+        elif palabras[0] == "delete":
+            coma, nombre_tabla, row_id, colfprop = comando.split(maxsplit=3)
 
+            # Quitando la coma del nombre.
+            nombre_tabla = limpiar(nombre_tabla)
+            row_id = limpiar(row_id)
+            colfprop = limpiar(colfprop)
+
+            # Qui
+
+            delete(nombre_tabla, row_id, colfprop)
         
         elif palabras[0] == "alter":
             
