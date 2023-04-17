@@ -50,8 +50,6 @@ def main():
                 lista.append(cf)
 
             nombre = crear_tabla(nombre, column_families)
-
-            print(nombre)
         
         elif palabras[0] == "drop": # Comando para eliminar una tabla.
 
@@ -134,6 +132,14 @@ def main():
             row_id = limpiar2(row_id)
             
             get(nombre_tabla, row_id)  
+
+
+        elif palabras[0] == "truncate":
+            coma, nombre_tabla = comando.split(maxsplit=1)
+            
+            nombre_tabla = limpiar(nombre_tabla)
+            
+            truncate(nombre_tabla)
     
         
         elif palabras[0] == "alter":
