@@ -285,3 +285,34 @@ def truncate(tabla):
         print("Tabla truncada.")
     else:
         print(f"La tabla {tabla} no existe.")
+
+def eliminar_celda(diccionario, row):
+    if row not in diccionario:
+        print("No existe esta fila, row_key inválido.")
+        return diccionario
+    del diccionario[row]
+    return diccionario
+
+def delete_all(tabla, id):
+    # nombre_tabla, row_key, cf, column, value
+    global archivos_txt
+
+    #print(archivos_txt)
+
+    # Verificando si la tabla existe en el diccionario.
+    if tabla in archivos_txt:
+        # Agregando la celda a la tabla.
+        diccionario = {}
+
+        with open("./tables/" + tabla + ".txt", "r") as f:
+            diccionario = json.load(f)
+            
+            # Eliminando la celda a la tabla.
+            diccionario = eliminar_celda(diccionario, id)
+                
+        with open("./tables/" + tabla + ".txt", 'w') as f:
+            json.dump(diccionario, f)
+        print("Fila eliminada")
+
+    else:
+        print(f"La tabla {tabla} no existe.")

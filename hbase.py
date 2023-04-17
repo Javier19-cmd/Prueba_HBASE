@@ -121,6 +121,15 @@ def main():
             
             truncate(nombre_tabla)
     
+        elif palabras[0] == "deleteall":
+            coma, nombre_tabla, row_id = comando.split(maxsplit=2)
+
+            # Quitando la coma del nombre.
+            nombre_tabla = limpiar(nombre_tabla)
+            row_id = limpiar(row_id)
+
+            delete_all(nombre_tabla, row_id)
+
         elif palabras[0] == "quit": # Cerrar la simulación.
 
             print("Saliendo del simulador")

@@ -1,1 +1,1 @@
-{"prueba": {"timestamp": 1681717350090, "enabled": true, "families": ["cf1", "cf2"]}}
+{"prueba": {"timestamp": 1681717350090, "enabled": true, "families": ["cf1", "cf2"]}, "tabla": {"timestamp": 1681718553095, "enabled": true, "families": ["fc1", "fc2"]}}
