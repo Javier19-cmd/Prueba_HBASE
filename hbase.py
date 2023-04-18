@@ -85,8 +85,6 @@ def main():
             # Qui
 
             put(nombre_tabla, row_id, colfprop)
-
-            print("Dato ingresado")
             
         elif palabras[0] == "disable":
             
@@ -170,10 +168,10 @@ def main():
             nombre_tabla, params = comando.split(",", maxsplit=1)
             
             nombre_tabla = limpiar(nombre_tabla)
-            params = limpiar(params.replace("{", "").replace("}", ""))
+            params = limpiar(params).replace("{", "").replace("}", "")
             
             params = params.split(",")
-            
+            print(params)
             
             if params[0].startswith("NAME"):
                 nombre_cf = params[0].split("=>")[1]

@@ -67,7 +67,6 @@ def crear_tabla(nombre, column_families):
             contenido = f.read()
 
         diccionario = json.loads(contenido)
-        print(diccionario)
 
         # Agregando el nombre de la tabla, el timestamp y el enabled a un diccionario.
         diccionario[nombre] = {"timestamp": timestamp, "enabled": enable, "families": column_families}
@@ -218,24 +217,30 @@ def put(tabla, fila, colf):
 
     # Verificando si la tabla existe en el diccionario.
     if tabla in archivos_txt:
-        # Agregando la celda a la tabla.
         
-        s = colf.split(",")
-
-        diccionario = {}
-        respuesta = None
-
-        with open("./tables/" + tabla + ".txt", "r") as f:
-            diccionario = json.load(f)
-            for i in range(0, len(s), 2):
-                colfs = s[i].split(":")
-                valor = s[i+1]
-
-                # Agregando la celda a la tabla.
-                respuesta = agregar_celda(diccionario, fila, colfs[0], colfs[1], valor)
-                
-        with open("./tables/" + tabla + ".txt", 'w') as f:
-            json.dump(respuesta, f)
+        if is_enabled(tabla):
+            # Agregando la celda a la tabla.
+            
+            s = colf.split(",")
+    
+            diccionario = {}
+            respuesta = None
+    
+            with open("./tables/" + tabla + ".txt", "r") as f:
+                diccionario = json.load(f)
+                for i in range(0, len(s), 2):
+                    colfs = s[i].split(":")
+                    valor = s[i+1]
+    
+                    # Agregando la celda a la tabla.
+                    respuesta = agregar_celda(diccionario, fila, colfs[0], colfs[1], valor)
+                    
+            with open("./tables/" + tabla + ".txt", 'w') as f:
+                json.dump(respuesta, f)
+            
+            print("Dato ingresado")
+        else:
+            print("La tabla no esta habilitada.")
 
     else:
         print(f"La tabla {tabla} no existe.")
@@ -278,10 +283,16 @@ def is_enabled(tabla):
 
 def get(tabla, fila):
     if tabla in archivos_txt:
-        with open("./tables/" + tabla + ".txt", "r") as f:
-            diccionario = json.load(f)
         
-        print(diccionario[fila])
+        if is_enabled(tabla):
+            
+            with open("./tables/" + tabla + ".txt", "r") as f:
+                diccionario = json.load(f)
+            
+            print(diccionario[fila])
+            
+        else:
+            print("La tabla no esta habilitada.")
         
     else:
         print(f"La tabla {tabla} no existe.")
@@ -290,14 +301,17 @@ def add_column_family(tabla, cf):
     if tabla in archivos_txt:
         with open("metadata.txt", "r") as f:
             diccionario = json.load(f)
-        
-        familias = diccionario[tabla]["families"]
-        familias.append(cf)
-        diccionario[tabla]["families"] = list(set(familias))
-        
-        with open("metadata.txt", 'w') as f:
-            json.dump(diccionario, f)
-        
+         
+        if is_enabled(tabla):
+            familias = diccionario[tabla]["families"]
+            familias.append(cf)
+            diccionario[tabla]["families"] = list(set(familias))
+            
+            with open("metadata.txt", 'w') as f:
+                json.dump(diccionario, f)
+        else:
+            print("La tabla no esta habilitada.")
+            
     else:
         print(f"La tabla {tabla} no existe.")
         
@@ -324,6 +338,11 @@ def delete_column_family(tabla, cf):
             
             with open("./tables/" + tabla + ".txt", "w") as f:
                 diccionario = json.dump(diccionario, f)
+        else:
+            print("La tabla no esta habilitada.")
+           
+    else:
+        print(f"La tabla {tabla} no existe.")
 
 def truncate(tabla):
     if tabla in archivos_txt:
@@ -391,34 +410,44 @@ def eliminar_todo(tabla, id):
 
 def contar(tabla):
     if tabla in archivos_txt:
-        diccionario = {}
-
-        with open("./tables/" + tabla + ".txt", "r") as f:
-            diccionario = json.load(f)
-            
-            # Eliminando la celda a la tabla.
-            return len(diccionario)
+        
+        if is_enabled(tabla):
+            diccionario = {}
+    
+            with open("./tables/" + tabla + ".txt", "r") as f:
+                diccionario = json.load(f)
+                
+                # Eliminando la celda a la tabla.
+                return len(diccionario)
+        else:
+            print("La tabla no esta habilitada.")
+    
     else:
         print(f"La tabla {tabla} no existe.")
 
 def scan(tabla):
     if tabla in archivos_txt:
-        diccionario = {}
-        print_table = PrettyTable()
-        print_table.field_names = ["ROW", "COLUMN+CELL"]
-
-        with open("./tables/" + tabla + ".txt", "r") as f:
-            diccionario = json.load(f)
-            for id, dicc in diccionario.items():
-                for familia, dicc2 in dicc.items():
-                    for propiedad, dicc3 in dicc2.items():
-                        print(propiedad)
-                        timestamp = dicc3["timestamp"]
-                        value = dicc3["value"]
-                        print_table.add_row([id, f"column={familia}:{propiedad}, timestamp={timestamp}, value={value}"])
-
-            #column=Personal info:Name, timestamp=1504600767520, value=Alex  
-        print(print_table)
+        
+        if is_enabled(tabla):
+            diccionario = {}
+            print_table = PrettyTable()
+            print_table.field_names = ["ROW", "COLUMN+CELL"]
+    
+            with open("./tables/" + tabla + ".txt", "r") as f:
+                diccionario = json.load(f)
+                for id, dicc in diccionario.items():
+                    for familia, dicc2 in dicc.items():
+                        for propiedad, dicc3 in dicc2.items():
+                            print(propiedad)
+                            timestamp = dicc3["timestamp"]
+                            value = dicc3["value"]
+                            print_table.add_row([id, f"column={familia}:{propiedad}, timestamp={timestamp}, value={value}"])
+    
+                #column=Personal info:Name, timestamp=1504600767520, value=Alex  
+            print(print_table)
+        
+        else:
+            print("La tabla no esta habilitada.")
     else:
         print(f"La tabla {tabla} no existe.")       
 
@@ -432,42 +461,46 @@ def delete(tabla, fila, colf):
     # Verificando si la tabla existe en el diccionario.
     if tabla in archivos_txt:
         # Agregando la celda a la tabla.
-        
-        s = colf.split()
-
-        diccionario = {}
-
-        with open("./tables/" + tabla + ".txt", "r") as f:
-            diccionario = json.load(f)
-            diccionario_copy = copy.deepcopy(diccionario)
-            eliminar = True
-            for i in s:
-                colfs = i.split(":")
-
-                # Agregando la celda a la tabla.
-                if fila not in diccionario_copy:
-                    print("Fila inválida")
-                    eliminar = False
-                    break
+        if is_enabled(tabla):
+            
+            s = colf.split()
+    
+            diccionario = {}
+    
+            with open("./tables/" + tabla + ".txt", "r") as f:
+                diccionario = json.load(f)
+                diccionario_copy = copy.deepcopy(diccionario)
+                eliminar = True
+                for i in s:
+                    colfs = i.split(":")
+    
+                    # Agregando la celda a la tabla.
+                    if fila not in diccionario_copy:
+                        print("Fila inválida")
+                        eliminar = False
+                        break
+                    
+                    if colfs[0] not in diccionario_copy[fila]:
+                        print("Familia inválida")
+                        eliminar = False
+                        break
+                    
+                    if colfs[1] not in diccionario_copy[fila][colfs[0]]:
+                        print("Propiedad inválida")
+                        eliminar = False
+                        break
+                    
+                    del diccionario_copy[fila][colfs[0]][colfs[1]]
+                    
+            if eliminar == True:
+                diccionario = diccionario_copy
+                print("Propiedad eliminada")
+    
+            with open("./tables/" + tabla + ".txt", 'w') as f:
+                json.dump(diccionario, f)
                 
-                if colfs[0] not in diccionario_copy[fila]:
-                    print("Familia inválida")
-                    eliminar = False
-                    break
-                
-                if colfs[1] not in diccionario_copy[fila][colfs[0]]:
-                    print("Propiedad inválida")
-                    eliminar = False
-                    break
-                
-                del diccionario_copy[fila][colfs[0]][colfs[1]]
-                
-        if eliminar == True:
-            diccionario = diccionario_copy
-            print("Propiedad eliminada")
-
-        with open("./tables/" + tabla + ".txt", 'w') as f:
-            json.dump(diccionario, f)
-
+        else:
+            print("La tabla no esta habilitada.")
+            
     else:
         print(f"La tabla {tabla} no existe.")
