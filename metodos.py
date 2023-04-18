@@ -220,7 +220,7 @@ def put(tabla, fila, colf):
     if tabla in archivos_txt:
         # Agregando la celda a la tabla.
         
-        s = colf.split()
+        s = colf.split(",")
 
         diccionario = {}
         respuesta = None
@@ -274,7 +274,7 @@ def is_enabled(tabla):
         return diccionario[tabla]["enabled"]
         
     else:
-        print(f"La tabla {tabla} no existe.")
+        return None
 
 def get(tabla, fila):
     if tabla in archivos_txt:

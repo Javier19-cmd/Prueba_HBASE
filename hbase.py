@@ -28,7 +28,7 @@ def main():
         
         elif palabras[0] == "create": # Crear una tabla.
             comando = ''.join(palabras[1:])
-            nombre, column_fam = comando.split(maxsplit=1)
+            nombre, column_fam = comando.split(",", maxsplit=1)
 
             # Se usará tabla y resto.
             nombre = limpiar(nombre)
@@ -75,7 +75,7 @@ def main():
 
             # put 'tabla', 'id', 'familia:propiedad_llave', 'valor'
             comando = ''.join(palabras[1:])
-            nombre_tabla, row_id, colfprop = comando.split(maxsplit=2)
+            nombre_tabla, row_id, colfprop = comando.split(",", maxsplit=2)
 
             # Quitando la coma del nombre.
             nombre_tabla = limpiar(nombre_tabla)
@@ -114,9 +114,13 @@ def main():
             nombre_tabla = comando
             
             nombre_tabla = limpiar(nombre_tabla)
-            
-            print(is_enabled(nombre_tabla))
-    
+            resultado = is_enabled(nombre_tabla) 
+
+            if resultado is None:
+                print(f'No existe la tabla {nombre_tabla}')
+            else:
+                print(resultado)
+
         
         elif palabras[0] == "get":
             
