@@ -75,8 +75,11 @@ def eliminar_archivo(nombre):
 
         print("Nombre: ", nombre)
 
-        # Eliminando el archivo del directorio /tables.
-        os.remove("./tables/" + nombre + ".txt")
+        # Eliminando el archivo del directorio /tables
+        try:
+            os.remove("./tables/" + nombre + ".txt")
+        except:
+            print("No se pudo eliminar el archivo.")
 
     else:
         print("El archivo {nombre} no existe.")

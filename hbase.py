@@ -18,6 +18,7 @@ def main():
         comando = input()
         palabras = comando.split()
 
+        #try: 
         if palabras[0] == "describe": # Imprimir las colum families.
             comando = ''.join(palabras[1:])
             nombre = comando
@@ -25,7 +26,7 @@ def main():
             nombre = limpiar(nombre)
 
             describe(nombre)
-        
+    
         elif palabras[0] == "create": # Crear una tabla.
             comando = ''.join(palabras[1:])
             nombre, column_fam = comando.split(",", maxsplit=1)
@@ -133,7 +134,7 @@ def main():
 
         elif palabras[0] == "truncate":
             comando = ''.join(palabras[1:])
-            coma, nombre_tabla = comando
+            nombre_tabla = comando
             
             nombre_tabla = limpiar(nombre_tabla)
             
@@ -180,7 +181,7 @@ def main():
                     if params[1].startswith("METHOD") and params[1].endswith("delete"):
                         delete_column_family(nombre_tabla, nombre_cf)
                     else:
-                        print("Comando incorrecto")
+                        print("1")
                 else:
                     add_column_family(nombre_tabla, nombre_cf)
             else:
@@ -206,5 +207,10 @@ def main():
 
             print("Saliendo del simulador")
             break
+
+        else: 
+            print("Comando incorrecto")
+        #except:
+            #print("Comando incorrecto")
             
 main()
