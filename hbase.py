@@ -134,7 +134,7 @@ def main():
 
         elif palabras[0] == "truncate":
             comando = ''.join(palabras[1:])
-            nombre_tabla = comando
+            znombre_tabla = comando
             
             nombre_tabla = limpiar(nombre_tabla)
             

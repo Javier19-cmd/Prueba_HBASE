@@ -163,8 +163,6 @@ def eliminar_tabla(nombre):
                 archivos_txt.remove(nombre)
 
                 fl.eliminar_archivo(nombre)
-            
-            return
 
         with open("metadata.txt", "w") as f:
             f.write(json.dumps(diccionario))
